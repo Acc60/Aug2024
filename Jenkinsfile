@@ -2,22 +2,16 @@ pipeline {
     agent any
 
     stages {
-        stage('Build')
-            {
-            steps {
-                echo 'Building the test'
-                  }
-            }
-           stage('Compile') 
-           {
-            steps {
-                echo 'Compiling the test'
-                  }
-           }
-        stage('Test') {
-            steps {
-                echo 'Testing the app'
-            }
+     stage('Building Image') {
+        docker.withRegistry('https://registry.hub.docker.com', 'docker_hub') {
+            def customImage = docker.build("acc60/nitishrepo:latest")
+            customImage.push()
+        }
+     }
+
+     stage('Run Container') {
+        sh 'docker run -d acc60/nitishrepo:latest'
     }
 }
 }
+
